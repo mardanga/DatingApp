@@ -17,10 +17,14 @@ export class NavbarComponent implements OnInit {
   login() {
     this._as.login(this.form).subscribe(
       resp => {
-        console.log('login succefull');
-      },error => {
+        console.log('login successfull');
+      }, error => {
         console.log('login failed');
       }
     );
+  }
+
+  logout() {
+    this._as.logout();
   }
 }

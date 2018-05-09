@@ -8,6 +8,7 @@ export class AuthService {
 
   private URL = 'http://localhost:5000/api/auth/';
   token = '';
+  loggedIn = false;
   constructor(public http: Http) { }
 
   login(datos: any) {
@@ -20,9 +21,16 @@ export class AuthService {
       if (user) {
         localStorage.setItem('token', user.tokenString);
         this.token = user.tokenString;
+        this.loggedIn = true;
       }
 
     });
+  }
+
+  logout() {
+    this.token = null;
+    localStorage.removeItem('token');
+    this.loggedIn = false;
   }
 
 }
