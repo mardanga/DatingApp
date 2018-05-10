@@ -1,6 +1,6 @@
 <!-- home page html -->
 
-<div class="text-center">
+<div class="text-center" *ngIf="!registerMode">
     <h1>Find your match</h1>
     <p class="lead">Come on in to view your matches... All you need to do is sign up!</p>
     <div class="text-center">
@@ -10,6 +10,6 @@
 </div>
 <div class="container" *ngIf="registerMode">
     <div class="col-md-4 offset-4">
-        <app-register></app-register>
+        <app-register [registerModeFromHome]="registerMode" (cancelClick)="registerMode = $event"></app-register>
     </div>
 </div>

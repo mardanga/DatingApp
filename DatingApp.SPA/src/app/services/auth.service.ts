@@ -33,4 +33,12 @@ export class AuthService {
     this.loggedIn = false;
   }
 
+  register(datos: any) {
+
+    const headers = new Headers({'content-type': 'application/json'});
+    const opts = new RequestOptions({headers: headers});
+
+    return this.http.post(this.URL + 'register', datos, opts);
+
+  }
 }
