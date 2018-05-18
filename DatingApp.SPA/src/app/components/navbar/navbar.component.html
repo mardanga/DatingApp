@@ -18,13 +18,13 @@
             </li>
 
         </ul>
-        <form *ngIf="!_as.loggedIn" #loginForm="ngForm" class="form-inline my-2 my-lg-0" (ngSubmit)="login()">
+        <form *ngIf="!loginValido()" #loginForm="ngForm" class="form-inline my-2 my-lg-0" (ngSubmit)="login()">
             <input class="form-control mr-sm-2" placeholder="Email" aria-label="Email" type="text" required [(ngModel)]="form.username" name="username">
             <input class="form-control mr-sm-2" placeholder="Password" aria-label="Password" type="password" required [(ngModel)]="form.password" name="password">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit" [disabled]="!loginForm.valid">Sign In</button>
         </form>
 
-        <ul class="navbar-nav navbar-right" *ngIf="_as.loggedIn">
+        <ul class="navbar-nav navbar-right" *ngIf="loginValido()">
             <li class="nav-item">
                 <a class="nav-link" (click)="logout()">LogOut</a>
             </li>

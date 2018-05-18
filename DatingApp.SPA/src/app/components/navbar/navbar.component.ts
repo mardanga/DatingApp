@@ -28,4 +28,8 @@ export class NavbarComponent implements OnInit {
   logout() {
     this._as.logout();
   }
+
+  loginValido() {
+    return this._as.loggedIn();
+  }
 }

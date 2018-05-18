@@ -5,13 +5,16 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
 import { Observable } from 'rxjs/Observable';
 
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable()
 export class AuthService {
 
   private URL = 'http://localhost:5000/api/auth/';
   token = '';
-  loggedIn = false;
+  varLoggedIn = false;
+  jwtHelper = new JwtHelperService();
+
   constructor(public http: Http) { }
 
   login(datos: any) {
@@ -24,7 +27,7 @@ export class AuthService {
       if (user) {
         localStorage.setItem('token', user.tokenString);
         this.token = user.tokenString;
-        this.loggedIn = true;
+        this.varLoggedIn = true;
       }
 
     }).catch(this.handleError);
@@ -33,7 +36,7 @@ export class AuthService {
   logout() {
     this.token = null;
     localStorage.removeItem('token');
-    this.loggedIn = false;
+    this.varLoggedIn = false;
   }
 
   register(datos: any) {
@@ -59,5 +62,9 @@ export class AuthService {
     return Observable.throw(
       modelStateErrors || 'Server error'
     );
+  }
+
+  loggedIn() {
+    return this.jwtHelper.isTokenExpired('token');
   }
 }
