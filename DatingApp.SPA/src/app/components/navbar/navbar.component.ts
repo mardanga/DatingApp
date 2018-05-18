@@ -1,5 +1,6 @@
 import { AuthService } from './../../services/auth.service';
 import { Component, OnInit } from '@angular/core';
+import { AlertifyService } from '../../services/alertify.service';
 
 @Component({
   selector: 'app-navbar',
@@ -9,7 +10,7 @@ import { Component, OnInit } from '@angular/core';
 export class NavbarComponent implements OnInit {
 
   form: any = {};
-  constructor(public _as: AuthService) { }
+  constructor(public _as: AuthService, private _als: AlertifyService  ) { }
 
   ngOnInit() {
   }
@@ -17,9 +18,9 @@ export class NavbarComponent implements OnInit {
   login() {
     this._as.login(this.form).subscribe(
       resp => {
-        console.log('login successfull');
+        this._als.message('login successfull');
       }, error => {
-        console.log('login failed');
+        this._als.error(error);
       }
     );
   }

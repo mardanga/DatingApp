@@ -1,7 +1,10 @@
+import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Injectable } from '@angular/core';
-import { Http, RequestOptions, Headers } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { UrlResolver } from '@angular/compiler';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/observable/throw';
+import { Observable } from 'rxjs/Observable';
+
 
 @Injectable()
 export class AuthService {
@@ -24,7 +27,7 @@ export class AuthService {
         this.loggedIn = true;
       }
 
-    });
+    }).catch(this.handleError);
   }
 
   logout() {
@@ -34,11 +37,27 @@ export class AuthService {
   }
 
   register(datos: any) {
-
     const headers = new Headers({'content-type': 'application/json'});
     const opts = new RequestOptions({headers: headers});
+    return this.http.post(this.URL + 'register', datos, opts).catch(this.handleError);
+  }
 
-    return this.http.post(this.URL + 'register', datos, opts);
-
+  private handleError(error: any) {
+    const applicationError = error.headers.get('Application-Error');
+    if (applicationError) {
+      return Observable.throw(applicationError);
+    }
+    const serverError = error.json();
+    let modelStateErrors = '';
+    if (serverError) {
+      for (const key in serverError) {
+        if (serverError[key]) {
+          modelStateErrors += serverError[key] + '\n';
+        }
+      }
+    }
+    return Observable.throw(
+      modelStateErrors || 'Server error'
+    );
   }
 }
