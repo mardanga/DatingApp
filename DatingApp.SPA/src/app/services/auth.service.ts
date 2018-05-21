@@ -1,11 +1,14 @@
+
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/observable/throw';
+
 import { Observable } from 'rxjs/Observable';
 
-import { JwtHelperService } from '@auth0/angular-jwt';
+import {JwtHelperService} from '@auth0/angular-jwt';
+
 
 @Injectable()
 export class AuthService {
@@ -13,7 +16,10 @@ export class AuthService {
   private URL = 'http://localhost:5000/api/auth/';
   token = '';
   varLoggedIn = false;
-  jwtHelper = new JwtHelperService();
+
+
+  tokenDecodificado: any;
+  jwtHelper: JwtHelperService = new JwtHelperService();
 
   constructor(public http: Http) { }
 
@@ -23,19 +29,25 @@ export class AuthService {
     const opts = new RequestOptions({headers: headers});
 
     return this.http.post(this.URL + 'login', datos, opts).map(response => {
-      let user = response.json();
+      const user = response.json();
       if (user) {
-        localStorage.setItem('token', user.tokenString);
+        localStorage.setItem('auth_token', user.tokenString);
         this.token = user.tokenString;
+        this.tokenDecodificado = this.decodificarToken();
+
         this.varLoggedIn = true;
       }
 
     }).catch(this.handleError);
   }
 
+  decodificarToken() {
+    return this.jwtHelper.decodeToken(localStorage.getItem('auth_token'));
+  }
+
   logout() {
     this.token = null;
-    localStorage.removeItem('token');
+    localStorage.removeItem('auth_token');
     this.varLoggedIn = false;
   }
 
@@ -65,6 +77,6 @@ export class AuthService {
   }
 
   loggedIn() {
-    return this.jwtHelper.isTokenExpired('token');
+      return !this.jwtHelper.isTokenExpired(localStorage.getItem('auth_token'));
   }
 }

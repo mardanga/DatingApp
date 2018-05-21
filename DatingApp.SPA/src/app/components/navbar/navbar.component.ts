@@ -30,6 +30,6 @@ export class NavbarComponent implements OnInit {
   }
 
   loginValido() {
-    return this._as.loggedIn();
+   return this._as.loggedIn();
   }
 }
