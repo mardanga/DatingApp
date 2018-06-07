@@ -33,9 +33,13 @@ namespace DatingApp.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("Default")));
+            services.AddTransient<Seed>();
             services.AddCors();
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(Options => {
+                Options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });;
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IDatingRepository, DatingRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer( options => {
                 byte[] key = Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:token").Value);
@@ -47,10 +51,11 @@ namespace DatingApp.API
                 };
             });
 
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, Seed seeder)
         {
             if (env.IsDevelopment())
             {
@@ -71,7 +76,7 @@ namespace DatingApp.API
                     });
                 });
             }
-
+            //seeder.SeedUsers();
             app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowCredentials().AllowAnyMethod());
             app.UseAuthentication();
             app.UseMvc();
