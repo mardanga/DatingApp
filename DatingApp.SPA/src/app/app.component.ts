@@ -1,22 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from './services/auth.service';
-
+import { AuthService } from './_services/auth.service';
+import { JwtHelper } from 'angular2-jwt';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
-
+export class AppComponent implements OnInit{
   title = 'app';
+  jwtHelper: JwtHelper = new JwtHelper();
 
+  constructor(private authService: AuthService) {}
 
-  constructor(private _as: AuthService) {
-
-  }
-
-  ngOnInit(): void {
-    this._as.tokenDecodificado = this._as.decodificarToken();
+  ngOnInit() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.authService.decodedToken = this.jwtHelper.decodeToken(token);
+    }
   }
 }

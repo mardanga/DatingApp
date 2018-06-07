@@ -1,49 +1,44 @@
-
+import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-
-
 import { AppComponent } from './app.component';
-import { ValuesComponent } from './components/Values/Values.component';
-import { HttpModule } from '@angular/http';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { AuthService } from './services/auth.service';
-import { HomeComponent } from './components/home/home.component';
-import { RegisterComponent } from './components/register/register.component';
-import { AlertifyService } from './services/alertify.service';
+import { NavComponent } from './nav/nav.component';
+import { AuthService } from './_services/auth.service';
+import { HomeComponent } from './home/home.component';
+import { RegisterComponent } from './register/register.component';
+import { AlertifyService } from './_services/alertify.service';
 import { BsDropdownModule } from 'ngx-bootstrap';
-
-import { MessagesComponent } from './components/messages/messages.component';
-import { ListsComponent } from './components/lists/lists.component';
-import { MembersComponent } from './components/members/members.component';
-import { routes } from './app.routing';
+import { MemberListComponent } from './member-list/member-list.component';
+import { ListsComponent } from './lists/lists.component';
+import { MessagesComponent } from './messages/messages.component';
+import { RouterModule } from '@angular/router';
+import { appRoutes } from './routes';
+import { AuthGuard } from './_guards/auth.guard';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ValuesComponent,
-    NavbarComponent,
+    NavComponent,
     HomeComponent,
     RegisterComponent,
-    MembersComponent,
+    MemberListComponent,
     ListsComponent,
     MessagesComponent
-  ],
+],
   imports: [
     BrowserModule,
     HttpModule,
     FormsModule,
     BsDropdownModule.forRoot(),
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(appRoutes)
   ],
   providers: [
     AuthService,
-    AlertifyService
+    AlertifyService,
+    AuthGuard
   ],
   bootstrap: [AppComponent]
 })
-
 export class AppModule { }
