@@ -1,8 +1,9 @@
 using System;
+using DatingApp.API.Models;
 
-namespace DatingApp.API.Models
+namespace DatingApp.API.Dtos
 {
-    public class Photo
+    public class PhotoForReturnDto
     {
         public int Id { get; set; }
         public string Url { get; set; }
