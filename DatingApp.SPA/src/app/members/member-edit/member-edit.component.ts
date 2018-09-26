@@ -36,4 +36,8 @@ export class MemberEditComponent implements OnInit {
 
   }
 
+  updateProfilePhoto(event) {
+    this.user.photoUrl = event;
+  }
+
 }
