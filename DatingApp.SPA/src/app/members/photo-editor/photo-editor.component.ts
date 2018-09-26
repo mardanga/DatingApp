@@ -18,10 +18,12 @@ import { FileUploader } from 'ng2-file-upload';
 })
 export class PhotoEditorComponent implements OnInit {
   @Input()photos: Photo[];
+  @Output() getMainPhotoUrl = new EventEmitter<string>();
   uploader: FileUploader;
   hasBaseDropZoneOver = false;
   hasAnotherDropZoneOver = false;
   private baseUrl = environment.apiUrl;
+  private currentMainPhoto: Photo;
 
   constructor(
     private authService: AuthService,
@@ -73,8 +75,10 @@ export class PhotoEditorComponent implements OnInit {
 
     this._us.setMainPhotoUser(this.authService.decodedToken.nameid, photo.id).subscribe(
       res => {
-        console.log('Photo set');
-
+        this.currentMainPhoto = this.photos.filter(p => p.isMain === true)[0];
+        this.currentMainPhoto.isMain = false;
+        photo.isMain = true;
+        this.getMainPhotoUrl.emit(photo.url);
       },
       err => {
         this._as.error(err);
