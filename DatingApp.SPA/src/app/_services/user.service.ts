@@ -32,6 +32,9 @@ export class UserService {
   }
 
   setMainPhotoUser(idUser: number, idFoto: number) {
+    console.log(idUser);
+    console.log(idFoto);
+
     return this.authHttp
       .post(this.baseUrl + 'users/' + idUser + '/photos/' + idFoto + '/setMain', {})
       .catch(this.handleError);

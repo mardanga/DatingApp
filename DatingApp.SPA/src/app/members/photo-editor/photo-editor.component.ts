@@ -70,6 +70,7 @@ export class PhotoEditorComponent implements OnInit {
   }
 
   updateMainPhotoUser(photo: Photo) {
+
     this._us.setMainPhotoUser(this.authService.decodedToken.nameid, photo.id).subscribe(
       res => {
         console.log('Photo set');
