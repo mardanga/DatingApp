@@ -1,62 +1,49 @@
-import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Injectable } from '@angular/core';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/observable/throw';
-import { Observable } from 'rxjs/Observable';
-import { tokenNotExpired, JwtHelper } from 'angular2-jwt';
+import { HttpClient } from '@angular/common/http';
+import {BehaviorSubject} from 'rxjs';
+import { map } from 'rxjs/operators';
+import { JwtHelperService } from '@auth0/angular-jwt';
+import { environment } from '../../environments/environment';
+import { User } from '../_models/user';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
-  baseUrl = 'http://localhost:5000/api/auth/';
-  userToken: any;
+  baseUrl = environment.apiUrl + 'auth/';
+  jwtHelper = new JwtHelperService();
   decodedToken: any;
-  jwtHelper: JwtHelper = new JwtHelper();
+  currentUser: User;
+  photoUrl = new BehaviorSubject<string>('../../assets/user.png');
+  currentPhotoUrl = this.photoUrl.asObservable();
 
-  constructor(private http: Http) {}
+  constructor(private http: HttpClient) {}
+
+  changeMemberPhoto(photoUrl: string) {
+    this.photoUrl.next(photoUrl);
+  }
 
   login(model: any) {
-    return this.http.post(this.baseUrl + 'login', model, this.requestOptions()).map((response: Response) => {
-      const user = response.json();
-      if (user) {
-        localStorage.setItem('token', user.token);
-        this.decodedToken = this.jwtHelper.decodeToken(user.token);
-        console.log(this.decodedToken);
-        this.userToken = user.token;
-      }
-    }).catch(this.handleError);
-  }
-
-  register(model: any) {
-    return this.http.post(this.baseUrl + 'register', model, this.requestOptions()).catch(this.handleError);
-  }
-
-  loggedIn() {
-    return tokenNotExpired('token');
-  }
-
-  private requestOptions() {
-    const headers = new Headers({'Content-type': 'application/json'});
-    return new RequestOptions({headers: headers});
-  }
-
-  private handleError(error: any) {
-    const applicationError = error.headers.get('Application-Error');
-    if (applicationError) {
-      return Observable.throw(applicationError);
-    }
-    const serverError = error.json();
-    let modelStateErrors = '';
-    if (serverError) {
-      for (const key in serverError) {
-        if (serverError[key]) {
-          modelStateErrors += serverError[key] + '\n';
+    return this.http.post(this.baseUrl + 'login', model).pipe(
+      map((response: any) => {
+        const user = response;
+        if (user) {
+          localStorage.setItem('token', user.token);
+          localStorage.setItem('user', JSON.stringify(user.user));
+          this.decodedToken = this.jwtHelper.decodeToken(user.token);
+          this.currentUser = user.user;
+          this.changeMemberPhoto(this.currentUser.photoUrl);
         }
-      }
-    }
-    return Observable.throw(
-      modelStateErrors || 'Server error'
+      })
     );
   }
 
+  register(model: any) {
+    return this.http.post(this.baseUrl + 'register', model);
+  }
+
+  loggedIn() {
+    const token = localStorage.getItem('token');
+    return !this.jwtHelper.isTokenExpired(token);
+  }
 }

@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 declare let alertify: any;
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AlertifyService {
   constructor() {}
 
@@ -9,8 +11,7 @@ export class AlertifyService {
     alertify.confirm(message, function(e) {
       if (e) {
         okCallback();
-      } else {
-      }
+      } else {}
     });
   }
 
